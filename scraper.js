@@ -8,9 +8,10 @@ app.get("/scrape", async (req, res) => {
   try {
     console.log("🚀 Launching browser...");
     const browser = await chromium.launch({
-      headless: false,
-      args: ["--no-sandbox", "--disable-gpu"]
-    });
+  headless: true, // ✅ important for Render
+  args: ["--no-sandbox", "--disable-gpu"]
+});
+
 
     const page = await browser.newPage();
 
