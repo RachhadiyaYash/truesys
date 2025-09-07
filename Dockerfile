@@ -7,11 +7,6 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci --production
 
-# Install Xvfb just in case
-RUN apt-get update \
-  && apt-get install -y xvfb x11-xserver-utils \
-  && rm -rf /var/lib/apt/lists/*
-
 # Copy app code
 COPY . .
 
