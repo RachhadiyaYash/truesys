@@ -9,7 +9,7 @@ app.get("/scrape", async (req, res) => {
     console.log("🚀 Launching browser...");
 
     const browser = await chromium.launch({
-      headless: process.env.NODE_ENV === "production" ? true : false,
+      headless:false,
       args: ["--no-sandbox", "--disable-gpu"]
     });
 
