@@ -7,11 +7,11 @@ const PORT = process.env.PORT || 3000;
 app.get("/scrape", async (req, res) => {
   try {
     console.log("🚀 Launching browser...");
-    const browser = await chromium.launch({
-  headless: false,
-  args: ["--no-sandbox", "--disable-gpu"]
-});
 
+    const browser = await chromium.launch({
+      headless: process.env.NODE_ENV === "production" ? true : false,
+      args: ["--no-sandbox", "--disable-gpu"]
+    });
 
     const page = await browser.newPage();
 
@@ -48,7 +48,7 @@ app.get("/scrape", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("✅ IPO Scraper API is running. Use /scrape to fetch IPO list.");
 });
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
-
