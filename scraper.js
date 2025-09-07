@@ -9,33 +9,28 @@ app.get("/scrape", async (req, res) => {
     console.log("🚀 Launching browser...");
 
     const browser = await chromium.launch({
-  headless: true,   // ✅ force headless in Render
-  args: ["--no-sandbox", "--disable-gpu"]
-});
-
+      headless: process.env.NODE_ENV === "production" ? true : false,
+      args: ["--no-sandbox", "--disable-gpu"]
+    });
 
     const page = await browser.newPage();
 
     console.log("🌐 Navigating...");
     await page.goto("https://ipostatus.kfintech.com/", { waitUntil: "domcontentloaded" });
 
-    console.log("📌 Clicking dropdown...");
-    await page.click(".depository-select");
+    // 🚨 For testing, skip clicking / waiting
+    console.log("🔍 Fetching page title...");
+    const title = await page.title();
 
-    console.log("⌛ Waiting for IPO list...");
-    const ul = await page.waitForSelector("ul#mui-2", { timeout: 15000 });
-
-    const items = await ul.evaluate(() =>
-      Array.from(document.querySelectorAll("ul#mui-2 li")).map(li => li.textContent.trim())
-    );
+    // Optionally dump entire body
+    const bodyText = await page.evaluate(() => document.body.innerText);
 
     await browser.close();
 
-    console.log(`✅ Found ${items.length} IPOs`);
     res.json({
       status: "success",
-      count: items.length,
-      ipos: items
+      title,
+      preview: bodyText.slice(0, 500) // send first 500 chars
     });
   } catch (err) {
     console.error("❌ Scraper failed:", err);
